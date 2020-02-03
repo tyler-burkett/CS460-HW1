@@ -1,0 +1,31 @@
+def values_of(samples, feature, bins=None, equal_bins=None):
+    """
+    Determine possible values of feature for given. Create categories for
+
+    Parameters:
+    samples - Pandas DataFrame; last column is taken as the class labels
+    feature - Name of feature; Should correspond to column in samples
+
+    Keyword Args:
+    bins - number of bins/quantiles to have for continuous data
+    equal_bins - Boolean for discretizing based of frequency or not
+                 (i.e bins will have roughly the same samples in each)
+    """
+    # If feature is already categorical, simply return the categories in use
+    if pd.core.dtypes.common.is_dtype_equal(samples[feature].dtype, pd.api.types.CategoricalDtype):
+        return samples[feature].dtype.categories
+
+    # If feature is a string type, factorize the feature based on string values.
+    # categories will be the different strings for the feature
+    if pd.core.dtypes.common.is_dtype_equal(samples[feature].dtype, pd.api.types.StringDtype):
+        coded_features, categories = pd.factorize(samples[feature])
+        return categories
+
+    # Default case. Assumed continuous data
+    # Cut the feature values into bins according to
+    if bins is None:
+        raise ValueError('Missing bin argument, which is required for a continuous feature')
+    if(equal_size):
+        return pd.qcut(samples[feature], bins)
+    else:
+        return pd.cut(samples[feature], bins)
