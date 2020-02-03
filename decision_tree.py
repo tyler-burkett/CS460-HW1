@@ -7,8 +7,9 @@ from pandas_util import values_of, subset_by_value
 class DecisionTree:
     """Decsion Tree Using ID3 Algorithm"""
 
-    def __init__(self):
-        pass
+    def __init__(self, bins=2, equal_bins=True):
+        self.bins = bins
+        self.equal_bins = equal_bins
 
     def fit(self, training_data, limit=None):
         self.root = self.build_tree(training_data, limit)
@@ -43,12 +44,12 @@ class DecisionTree:
         # Determine feature that gives best information gain
         split_feature = max(training_data.columns[0:-1],
                             default=training_data.columns[0],
-                            key=lambda x: info_gain(training_data, x))
+                            key=lambda x: info_gain(training_data, x, self.bins, self.equal_bins))
         node.attribute = split_feature
 
         # Determine possible values for splitting feature and
         # create leaves/subtrees
-        values = values_of(training_data, split_feature)
+        values = values_of(training_data, split_feature, self.bins, self.equal_bins)
         node.map = dict()
         for value in values:
             # Create subset with feature removed
