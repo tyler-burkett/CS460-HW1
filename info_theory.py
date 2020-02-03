@@ -2,15 +2,20 @@ import math
 from pandas_util import values_of, subset_by_value
 
 
-def entropy(samples):
+def entropy(samples, bins=None, equal_bins=None):
     """
     Compute entropy of given set of sample data points
 
     Parameters:
     samples - Pandas DataFrame; last column is taken as the class labels
+
+    Keyword Args:
+    bins - number of bins/quantiles to have for continuous data
+    equal_bins - Boolean for discretizing based of frequency or not
+                 (i.e bins will have roughly the same samples in each)
     """
     # Determine class label values
-    class_labels = values_of(samples, samples.columns[-1])
+    class_labels = values_of(samples, samples.columns[-1], bins, equal_bins)
 
     # Calculate entropy
     entropy_sum = 0
@@ -27,7 +32,7 @@ def entropy(samples):
     return entropy_sum
 
 
-def info_gain(samples, feature):
+def info_gain(samples, feature, bins=None, equal_bins=None):
     """
     Compute information gain on set of samples if split based on
     provided feature.
@@ -35,6 +40,11 @@ def info_gain(samples, feature):
     Parameters:
     samples - Pandas DataFrame; last column is taken as the class labels
     feature - Name of feature; should correspond to column in samples
+
+    Keyword Args:
+    bins - number of bins/quantiles to have for continuous data
+    equal_bins - Boolean for discretizing based of frequency or not
+                 (i.e bins will have roughly the same samples in each)
     """
     # Determine possible values of feature
     values = values_of(samples, feature)
