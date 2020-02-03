@@ -1,7 +1,7 @@
 import math
 import types
 import pandas as pd
-import values_of from pandas_util
+from pandas_util import values_of, subset_by_value
 
 def entropy(samples):
     """
@@ -17,12 +17,9 @@ def entropy(samples):
     entropy_sum = 0
     for class_label in class_labels:
         # Create subset of samples by filtering items based on the class label
-        if isinstance(class_label, types.FunctionType):
-            samples_v = samples.apply(class_label, axis=1)
-        else:
-            samples_v = samples[samples[samples.columns[-1]].eq(class_label)]
+        samples_v = subset_by_value(samples, samples.columns[-1], class_label)
 
-        # Calculate probabilty of class label in samples and add to sum
+        # Calculate part of entropy sum for class label
         probabilty = len(samples_v)/len(samples)
         try:
             sum = sum + probabilty * math.log2(probabilty)
@@ -39,17 +36,14 @@ def info_gain(samples, feature):
     samples - Pandas DataFrame; last column is taken as the class labels
     feature - Name of feature; Should correspond to column in samples
     """
-    # Calculate weighted sum of subset entropies if samples split on feature
+    # Determine possible values of feature
     values = values_of(samples, feature)
 
     # Calculate information gain
     entropy_sum = 0
     for value in values:
         # create subset of samples by filtering items based on the feature value
-        if isinstance(value, types.FunctionType):
-            samples_v = samples.apply(value, axis=1)
-        else:
-            samples_v = samples[samples[feature].eq(value)]
+        samples_v = subset_by_value(samples, feature, value)
 
         # Calculate weighted entropy of subset and add to sum
         entropy_sum = entropy_sum + len(samples_v)/len(samples) * entropy(samples_v)
