@@ -1,3 +1,5 @@
+import pandas as pd
+
 def values_of(samples, feature, bins=None, equal_bins=None):
     """
     Determine possible values of feature for given. Create categories for
@@ -29,3 +31,18 @@ def values_of(samples, feature, bins=None, equal_bins=None):
         return pd.qcut(samples[feature], bins)
     else:
         return pd.cut(samples[feature], bins)
+
+def subset_by_value(samples, feature, value):
+    """
+    Subset samples based on value
+
+    Parameters:
+    samples - Pandas DataFrame; last column is taken as the class labels
+    feature - Name of feature; Should correspond to column in samples
+    value - Value to check for membership in subset; can be literal value or Index
+    """
+    if isinstance(value, pd.Index):
+        samples_v = samples[samples[feature] in value]
+    else:
+        samples_v = samples[samples[feature].eq(value)]
+    return samples_v
