@@ -71,8 +71,8 @@ def cut(values, bins):
         start = min + i * divisions
         end = min + (i + 1) * divisions
         if i == 0:
-            indexes.push(pd.Interval(left=start, right=end, closed='both'))
+            indexes.append(pd.Interval(left=start, right=end, closed='both'))
         else:
-            indexes.push(pd.Interval(left=start, right=end, closed='right'))
+            indexes.append(pd.Interval(left=start, right=end, closed='right'))
 
     return pd.CategoricalDtype(indexes).categories
