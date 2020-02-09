@@ -27,7 +27,7 @@ def values_of(samples, feature, bins=None):
     # Default case. Assumed continuous data
     # Cut the feature values into bins
     if bins is None:
-        raise ValueError('Missing required bin argument for continuous feature')
+        raise ValueError("Missing required bin argument for continuous feature")
     return cut(samples[feature], bins)
 
 
@@ -41,7 +41,7 @@ def subset_by_value(samples, feature, value):
     value - Value to check for subset membership; can be literal value or Index
     """
     if isinstance(value, pd.Interval):
-        samples_v = samples[samples[feature] in value]
+        samples_v = samples[samples[feature].apply(lambda item: item in value)]
     else:
         samples_v = samples[samples[feature].eq(value)]
     return samples_v
@@ -66,13 +66,14 @@ def cut(values, bins):
     # Create the bins by defining them as a interval.
     # Construct in such a way that values contained in [min, max] belong to
     # exaclty one.
-    indexes = []
+    intervals = []
+    intervals.append(pd.Interval(left=float("-inf"), right=min, closed="neither"))
     for i in range(bins):
         start = min + i * divisions
-        end = min + (i + 1) * divisions
+        end = min + (i + 1) * divisions if i != bins-1 else max
         if i == 0:
-            indexes.append(pd.Interval(left=start, right=end, closed='both'))
+            intervals.append(pd.Interval(left=start, right=end, closed="both"))
         else:
-            indexes.append(pd.Interval(left=start, right=end, closed='right'))
-
-    return pd.CategoricalDtype(indexes).categories
+            intervals.append(pd.Interval(left=start, right=end, closed="right"))
+    intervals.append(pd.Interval(left=max, right=float("inf"), closed="neither"))
+    return pd.CategoricalDtype(intervals).categories

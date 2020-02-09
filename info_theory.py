@@ -12,6 +12,10 @@ def entropy(samples, bins=None):
     Keyword Args:
     bins - number of bins/quantiles to have for continuous data
     """
+    # Empty sets have no entropy
+    if samples.empty:
+        return 0
+
     # Determine class label values
     class_labels = values_of(samples, samples.columns[-1], bins)
 
@@ -43,7 +47,7 @@ def info_gain(samples, feature, bins=None):
     bins - number of bins/quantiles to have for continuous data
     """
     # Determine possible values of feature
-    values = values_of(samples, feature)
+    values = values_of(samples, feature, bins)
 
     # Calculate information gain
     entropy_sum = 0
