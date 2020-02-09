@@ -20,7 +20,7 @@ def values_of(samples, feature, bins=None):
     # If feature is a string type, factorize the feature based on string value.
     # categories will be the different strings for the feature (i.e. assume these
     # are nominal values)
-    if pd.core.dtypes.common.is_dtype_equal(samples[feature].dtype, pd.api.types.StringDtype):
+    if pd.api.types.is_string_dtype(samples[feature]):
         categories = pd.Categorical(samples[feature])
         return categories.dtype.categories
 
