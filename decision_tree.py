@@ -56,7 +56,7 @@ class DecisionTree:
             return node
 
         # No more features to split on; use most common label as class label
-        if len(training_data.columns == 1):
+        if len(training_data.columns) == 1:
             node.label = max(
                 set(training_data.iloc[:, -1]),
                 key=list(training_data.iloc[:, -1]).count)
