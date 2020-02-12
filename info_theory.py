@@ -10,7 +10,7 @@ def entropy(samples, bins=None):
     samples - Pandas DataFrame; last column is taken as the class labels
 
     Keyword Args:
-    bins - number of bins/quantiles to have for continuous data
+    bins - Number of bins/quantiles to have for continuous data
     """
     # Empty sets have no entropy
     if samples.empty:
@@ -44,7 +44,7 @@ def info_gain(samples, feature, bins=None):
     feature - Name of feature; should correspond to column in samples
 
     Keyword Args:
-    bins - number of bins/quantiles to have for continuous data
+    bins - Number of bins/quantiles to have for continuous data
     """
     # Determine possible values of feature
     values = values_of(samples, feature, bins)
