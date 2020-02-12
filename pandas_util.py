@@ -10,7 +10,7 @@ def values_of(samples, feature, bins=None):
     feature - Name of feature; should correspond to column in samples
 
     Keyword Args:
-    bins - number of bins/quantiles to have for continuous data
+    bins - Number of bins/quantiles to have for continuous data; Default None
     """
     # If feature is already categorical, simply return the categories in use
     if pd.core.dtypes.common.is_dtype_equal(samples[feature].dtype,
@@ -47,7 +47,7 @@ def subset_by_value(samples, feature, value):
     return samples_v
 
 
-def cut(values, bins):
+def cut(values, bins, exterior_bins=True):
     """
     Create bins for continuous data. Returns Pandas Category object, with
     each category being an Interval (i.e. each bin is a range of values).
@@ -56,7 +56,11 @@ def cut(values, bins):
 
     Parameters:
     values - Pandas DataFrame; single column
-    bins - number of bins/quantiles to have for continuous data
+    bins - Number of bins/quantiles to have for continuous data
+
+    Keyword Args:
+    exterior_bins - flag to include bins for values outside [min, max] range;
+                    default True
     """
     # Calculate the size of each bin
     max = values.max(axis=0)
@@ -77,3 +81,22 @@ def cut(values, bins):
             intervals.append(pd.Interval(left=start, right=end, closed="right"))
     intervals.append(pd.Interval(left=max, right=float("inf"), closed="neither"))
     return pd.CategoricalDtype(intervals).categories
+
+
+def range_cut(min, max, bins, exterior_bins=True):
+    """
+    Wrapper function around cut() to specify min and max values directly. Useful
+    if the range of expected values for a feature is know beforehand but not
+    neccesarily present in a data set.
+
+    Parameters:
+    min - Minimum value of the range of values being discretized
+    max - Maximum value of the range of values being discretized
+    bins - Number of bins/quantiles to have for continuous data
+
+    Keyword Args:
+    exterior_bins - flag to include bins for values outside [min, max] range;
+                    default True
+    """
+    values = pd.DataFrame([min, max])
+    return cut(values, bins, exterior_bins)
