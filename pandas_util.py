@@ -71,7 +71,8 @@ def cut(values, bins, exterior_bins=True):
     # Construct in such a way that values contained in [min, max] belong to
     # exaclty one.
     intervals = []
-    intervals.append(pd.Interval(left=float("-inf"), right=min, closed="neither"))
+    if(exterior_bins):
+        intervals.append(pd.Interval(left=float("-inf"), right=min, closed="neither"))
     for i in range(bins):
         start = min + i * divisions
         end = min + (i + 1) * divisions if i != bins-1 else max
@@ -79,7 +80,8 @@ def cut(values, bins, exterior_bins=True):
             intervals.append(pd.Interval(left=start, right=end, closed="both"))
         else:
             intervals.append(pd.Interval(left=start, right=end, closed="right"))
-    intervals.append(pd.Interval(left=max, right=float("inf"), closed="neither"))
+    if(exterior_bins):
+        intervals.append(pd.Interval(left=max, right=float("inf"), closed="neither"))
     return pd.CategoricalDtype(intervals).categories
 
 
