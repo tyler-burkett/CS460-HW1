@@ -28,7 +28,7 @@ def entropy(samples, bins=None):
         # Calculate part of entropy sum for class label
         probabilty = len(samples_v)/len(samples)
         try:
-            entropy_sum = entropy_sum + probabilty * math.log2(probabilty)
+            entropy_sum = entropy_sum + -1 * probabilty * math.log2(probabilty)
         except ValueError:
             entropy_sum = entropy_sum + 0
     return entropy_sum
