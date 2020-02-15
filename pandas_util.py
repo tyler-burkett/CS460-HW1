@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas.core.dtypes.common import is_dtype_equal
 
 
 def values_of(samples, feature, bins=None):
@@ -13,8 +14,7 @@ def values_of(samples, feature, bins=None):
     bins - Number of bins/quantiles to have for continuous data; Default None
     """
     # If feature is already categorical, simply return the categories in use
-    if pd.core.dtypes.common.is_dtype_equal(samples[feature].dtype,
-                                            pd.api.types.CategoricalDtype):
+    if is_dtype_equal(samples[feature].dtype, pd.api.types.CategoricalDtype):
         return samples[feature].dtype.categories
 
     # If feature is a string type, factorize the feature based on string value.
@@ -47,7 +47,7 @@ def subset_by_value(samples, feature, value):
     return samples_v
 
 
-def cut(values, bins, exterior_bins=True):
+def cut(values, bins, exterior_bins=False):
     """
     Create bins for continuous data. Returns Pandas Category object, with
     each category being an Interval (i.e. each bin is a range of values).
@@ -55,7 +55,7 @@ def cut(values, bins, exterior_bins=True):
     For simplicity, this method only creates equal sized bins.
 
     Parameters:
-    values - Pandas DataFrame; single column
+    values - Pandas Series; single column of DataFrame
     bins - Number of bins/quantiles to have for continuous data
 
     Keyword Args:
@@ -85,7 +85,7 @@ def cut(values, bins, exterior_bins=True):
     return pd.CategoricalDtype(intervals).categories
 
 
-def range_cut(min, max, bins, exterior_bins=True):
+def range_cut(min, max, bins, exterior_bins=False):
     """
     Wrapper function around cut() to specify min and max values directly. Useful
     if the range of expected values for a feature is know beforehand but not
@@ -100,5 +100,5 @@ def range_cut(min, max, bins, exterior_bins=True):
     exterior_bins - flag to include bins for values outside [min, max] range;
                     default True
     """
-    values = pd.DataFrame([min, max])
+    values = pd.Series([min, max])
     return cut(values, bins, exterior_bins)

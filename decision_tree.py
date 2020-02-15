@@ -9,9 +9,33 @@ class DecisionTree:
 
     def __init__(self, bins=2):
         self.bins = bins
+        self.values = dict()
 
     def fit(self, training_data, limit=None):
+        """
+        Build a tree from the given training data.
+
+        Paramters:
+        training_data - Pandas DataFrame; last column is taken as the class labels
+
+        Keyword Args:
+        limit - Max depth limit of tree process; None by default
+        """
+        self.discretize_features(training_data)
         self.root = self.build_tree(training_data, limit)
+
+    def discretize_features(self, data):
+        """
+        Method to build tree dictionary with possible values for each features
+        and discretize as needed.
+
+        Paramters:
+        data - Pandas DataFrame; last column is taken as the class labels
+        """
+
+        # Extract possible values for each feature
+        for column in data.columns[0:-1]:
+            self.values[column] = values_of(data, column, self.bins).to_list()
 
     def predict(self, examples):
         """
@@ -29,11 +53,15 @@ class DecisionTree:
             while not hasattr(node, "label"):
                 split_feature = node.attribute
                 split_val = row[split_feature]
+                found = False
                 for child in node.children:
                     key = child.value
                     if (isinstance(key, pd.Interval) and split_val in key) or split_val == key:
                         node = child
+                        found = True
                         break
+                if(not found):
+                    raise ValueError("Value out of range: Index {}".format(index))
             results.append(node.label)
 
         # Return results
@@ -70,13 +98,13 @@ class DecisionTree:
                             key=lambda x: info_gain(training_data, x, self.bins))
         node.attribute = split_feature
 
-        # Determine possible values for splitting feature and
+        # Lookup possible values for splitting feature and
         # create leaves/subtrees
-        values = values_of(training_data, split_feature, self.bins)
+        values = self.values[split_feature]
         for value in values:
             # Create subset with feature removed
             training_data_v = subset_by_value(training_data, split_feature, value)
-            training_data_v.drop(split_feature, axis=1)
+            training_data_v = training_data_v.drop(split_feature, axis=1)
 
             # Subset data based on value
             if training_data_v.empty or (limit is not None and limit < 1):

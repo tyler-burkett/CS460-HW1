@@ -57,6 +57,6 @@ def info_gain(samples, feature, bins=None):
 
         # Calculate weighted entropy of subset and add to sum
         entropy_sum = entropy_sum + \
-            len(samples_v)/len(samples) * entropy(samples_v)
+            len(samples_v)/len(samples) * entropy(samples_v, bins)
 
-    return entropy(samples) - entropy_sum
+    return entropy(samples, bins) - entropy_sum
