@@ -35,7 +35,7 @@ class DecisionTree:
 
         # Extract possible values for each feature
         for column in data.columns[0:-1]:
-            self.values[column] = values_of(data, column, self.bins).to_list()
+            self.values[column] = values_of(data, column, self.bins)
 
     def predict(self, examples):
         """

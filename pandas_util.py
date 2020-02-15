@@ -82,7 +82,7 @@ def cut(values, bins, exterior_bins=False):
             intervals.append(pd.Interval(left=start, right=end, closed="right"))
     if(exterior_bins):
         intervals.append(pd.Interval(left=max, right=float("inf"), closed="neither"))
-    return pd.CategoricalDtype(intervals).categories
+    return intervals
 
 
 def range_cut(min, max, bins, exterior_bins=False):

@@ -26,12 +26,12 @@ vd_data_types = {"Platform": "category",
 
 if __name__ == "__main__":
     # Move to data directory
-    cwd = os.getcwd()
-    os.chdir(cwd + "\\data")
+    #cwd = os.getcwd()
+    #os.chdir(cwd + "\\data")
 
     for i in range(1, 5):
         # Read in synth_data
-        synth_data = pd.read_csv("synthetic-{}.csv".format(i),
+        synth_data = pd.read_csv("data/synthetic-{}.csv".format(i),
                                 names=synth_data_names,
                                 dtype=synth_data_types)
         print("synthetic-{} data".format(i))
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     plt.show()
 
     # Video Game Data
-    vd_data = pd.read_csv("Video_Games_Sales.csv", dtype=vd_data_types)
+    vd_data = pd.read_csv("data/Video_Games_Sales.csv", dtype=vd_data_types)
 
     # Fill in missing year values with median
     yor_median = vd_data["Year_of_Release"].median()
@@ -101,6 +101,12 @@ if __name__ == "__main__":
     vd_data["Critic_Score"] = vd_data["Critic_Score"].map(interval_map).astype("category")
 
     # Train tree with video game data and test accuracy
+    print("Video Game Data")
     tree = DecisionTree(10)
     tree.fit(vd_data, limit=3)
     print(RenderTree(tree.root))
+    results = tree.predict(vd_data)
+    num_correct = sum(row["Critic_Score"] == vd_data.at[index, "Critic_Score"]
+                        for index, row in results.iterrows())
+    accuracy = num_correct / len(synth_data)
+    print("accuracy: {}".format(accuracy))
